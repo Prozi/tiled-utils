@@ -1,9 +1,8 @@
 {
   "name": "tiled-utils",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "A collection of helpful methods and objects for using Tiled Editor with Pixi.js.",
-  "main": "dist/index.js",
-  "module": "index.js",
+  "main": "index.js",
   "scripts": {
     "publish": "npm publish",
     "clean": "rimraf dist",
@@ -41,12 +40,12 @@
   },
   "editions": [
     {
-      "description": "Source + ESNext + Import",
+      "description": "Source + ESNext + Require",
       "entry": "source/index.js",
       "syntaxes": [
         "javascript",
         "esnext",
-        "import",
+        "require",
         "arrows",
         "const",
         "let",
