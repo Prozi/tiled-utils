@@ -1,6 +1,9 @@
 Tile Utilities for Pixi.js
 =============
 
+This is an unofficial fork with commonjs require compatibility forked from: 
+[https://gitlab.com/griest/pexi/tree/master/src/tile-utilities](https://gitlab.com/griest/pexi/tree/master/src/tile-utilities)
+
 [![npm](https://img.shields.io/npm/v/pexi.svg)](https://www.npmjs.com/package/pixi-tile-utilities)
 [![npm](https://img.shields.io/npm/l/pexi.svg)](https://gitlab.com/griest/pixi-tile-utilities/LICENSE)
 
