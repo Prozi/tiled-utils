@@ -593,7 +593,7 @@ module.exports = module.exports.default = class TileUtilities {
             // I've dedcided that any tiles that have a `name` property are important
             // and should be accessible in the `world.objects` array.
 
-            let tileproperties = tiledMap.tilesets[0].tileproperties
+            let tileproperties = tiledMap.tilesets[0].tileproperties || {}
             let key = String(gid - 1)
 
             // If the JSON `tileproperties` object has a sub-object that
@@ -1000,7 +1000,7 @@ module.exports = module.exports.default = class TileUtilities {
     // Create a group called `world` to contain all the layers, sprites
     // and objects from the `tiledMap`. The `world` object is going to be
     // returned to the main game program
-    const tiledMap = PIXI.loader.resources[jsonTiledMap].data
+    const tiledMap = (typeof jsonTiledMap === 'string') ? PIXI.loader.resources[jsonTiledMap].data : jsonTiledMap
 
     // A. You need to add three custom properties to your Tiled Editor
     // map: `cartTilewidth`,`cartTileheight` and `tileDepth`. They define the Cartesian
@@ -1135,7 +1135,7 @@ module.exports = module.exports.default = class TileUtilities {
             // I've dedcided that any tiles that have a `name` property are important
             // and should be accessible in the `world.objects` array.
 
-            let tileproperties = tiledMap.tilesets[0].tileproperties
+            let tileproperties = tiledMap.tilesets[0].tileproperties || {}
             let key = String(gid - 1)
 
             // If the JSON `tileproperties` object has a sub-object that
