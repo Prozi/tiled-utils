@@ -8,7 +8,7 @@ module.exports = module.exports.default = class TileUtilities {
     this.renderer = ''
 
     // If the `renderingEngine` is Pixi, set up Pixi object aliases
-    if (renderingEngine.ParticleContainer && renderingEngine.Sprite) {
+    if (renderingEngine.Container && renderingEngine.Sprite) {
       this.renderingEngine = renderingEngine
       this.renderer = 'pixi'
       this.Container = this.renderingEngine.Container
@@ -24,8 +24,11 @@ module.exports = module.exports.default = class TileUtilities {
 
   // Make a texture from a frame in another texture or image
   frame (source, x, y, width, height) {
-    let texture,
-      imageFrame
+    if (!source) {
+      return new this.Texture()
+    }
+
+    let texture
 
     // If the source is a string, it's either a texture in the
     // cache or an image file
@@ -39,12 +42,9 @@ module.exports = module.exports.default = class TileUtilities {
     else if (source instanceof this.Texture) {
       texture = new this.Texture(source)
     }
-    if (!texture) {
-      throw new Error(`Please load the ${source} texture into the cache.`)
-    } else {
+    if (texture) {
       // Make a rectangle the size of the sub-image
-      imageFrame = new this.Rectangle(x, y, width, height)
-      texture.frame = imageFrame
+      texture.frame = new this.Rectangle(x, y, width, height)
       return texture
     }
   }
@@ -479,7 +479,7 @@ module.exports = module.exports.default = class TileUtilities {
     // Create a group called `world` to contain all the layers, sprites
     // and objects from the `tiledMap`. The `world` object is going to be
     // returned to the main game program
-    const tiledMap = PIXI.loader.resources[jsonTiledMap].data
+    const tiledMap = (typeof jsonTiledMap === 'string') ? PIXI.loader.resources[jsonTiledMap].data : jsonTiledMap
     const world = new this.Container()
 
     world.tileheight = tiledMap.tileheight
