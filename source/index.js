@@ -24,10 +24,6 @@ module.exports = module.exports.default = class TileUtilities {
 
   // Make a texture from a frame in another texture or image
   frame (source, x, y, width, height) {
-    if (!source) {
-      return new this.Texture()
-    }
-
     let texture
 
     // If the source is a string, it's either a texture in the
@@ -42,6 +38,11 @@ module.exports = module.exports.default = class TileUtilities {
     else if (source instanceof this.Texture) {
       texture = new this.Texture(source)
     }
+
+    else {
+      texture = this.Texture.EMPTY
+    }
+
     if (texture) {
       // Make a rectangle the size of the sub-image
       texture.frame = new this.Rectangle(x, y, width, height)

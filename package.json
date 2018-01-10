@@ -1,12 +1,12 @@
 {
   "name": "tiled-utils",
-  "version": "3.1.6",
+  "version": "3.1.7",
   "description": "A collection of helpful methods and objects for using Tiled Editor with Pixi.js.",
   "main": "index.js",
   "browser": "es2015/index.js",
   "scripts": {
     "lint": "eslint ./source --fix",
-    "compile": "node_modules/.bin/babel ./source --out-dir ./es2015 --presets es2015"
+    "compile": "babel ./source --out-dir ./es2015 --presets es2015"
   },
   "repository": {
     "type": "git",
