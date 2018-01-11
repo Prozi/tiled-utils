@@ -24,6 +24,13 @@ module.exports = module.exports.default = class TileUtilities {
 
   // Make a texture from a frame in another texture or image
   frame (source, x, y, width, height) {
+ 
+    // for backend use (with pixi-shim)
+    // return without frame retangle
+    if (!source) {
+      return this.Texture.EMPTY
+    }
+
     let texture
 
     // If the source is a string, it's either a texture in the
@@ -37,10 +44,6 @@ module.exports = module.exports.default = class TileUtilities {
     // If the `source` is a texture,  use it
     else if (source instanceof this.Texture) {
       texture = new this.Texture(source)
-    }
-
-    else {
-      texture = this.Texture.EMPTY
     }
 
     if (texture) {

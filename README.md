@@ -1,4 +1,6 @@
-Tile Utilities for Pixi.js
+# Tiled Utils for Pixi.js
+
+usable with node.js with pixi-shim
 =============
 
 This is an unofficial fork with commonjs require compatibility forked from: 
