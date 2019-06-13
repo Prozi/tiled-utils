@@ -1,13 +1,18 @@
 # Tiled Utils for Pixi.js
 
-usable with node.js with pixi-shim
+usable also in node.js
+
 =============
 
-This is an unofficial fork with commonjs require compatibility forked from: 
-[https://gitlab.com/griest/pexi/tree/master/src/tile-utilities](https://gitlab.com/griest/pexi/tree/master/src/tile-utilities)
+[https://badge.fury.io/js/tiled-utils.svg]
+(https://badge.fury.io/js/tiled-utils.svg)
+
+This is an unofficial fork with commonjs require compatibility [and some bugfixes] forked from: 
 
 [![npm](https://img.shields.io/npm/v/pexi.svg)](https://www.npmjs.com/package/pixi-tile-utilities)
 [![npm](https://img.shields.io/npm/l/pexi.svg)](https://gitlab.com/griest/pixi-tile-utilities/LICENSE)
+
+=============
 
 Tile Utilities is a collection of helpful methods and objects for using [Tiled Editor](http://www.mapeditor.org) with the [Pixi renderering engine](https://github.com/pixijs/pixi.js).
 
