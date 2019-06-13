@@ -1,5 +1,7 @@
 'use strict'
 
+/* global PIXI */
+
 module.exports = module.exports.default = class TileUtilities {
   constructor (renderingEngine = PIXI) {
     if (renderingEngine === undefined) throw new Error('Please assign a rendering engine in the constructor before using bump.js')
@@ -254,30 +256,29 @@ module.exports = module.exports.default = class TileUtilities {
     // Which points do you want to check?
     // "every", "some" or "center"?
     switch (pointsToCheck) {
-      case 'center':
+    case 'center':
 
-        // `hit` will be true only if the center point is touching
-        const point = {
-          center: {
-            x: sprite.centerX,
-            y: sprite.centerY
-          }
+      // `hit` will be true only if the center point is touching
+      sprite.collisionPoints = {
+        center: {
+          x: sprite.centerX,
+          y: sprite.centerY
         }
-        sprite.collisionPoints = point
-        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-        break
-      case 'every':
+      }
+      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+      break
+    case 'every':
 
-        // `hit` will be true if every point is touching
-        sprite.collisionPoints = this.getPoints(sprite)
-        collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
-        break
-      case 'some':
+      // `hit` will be true if every point is touching
+      sprite.collisionPoints = this.getPoints(sprite)
+      collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
+      break
+    case 'some':
 
-        // `hit` will be true only if some points are touching
-        sprite.collisionPoints = this.getPoints(sprite)
-        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-        break
+      // `hit` will be true only if some points are touching
+      sprite.collisionPoints = this.getPoints(sprite)
+      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+      break
     }
 
     // Return the collision object.
@@ -782,32 +783,31 @@ module.exports = module.exports.default = class TileUtilities {
     // Which points do you want to check?
     // "every", "some" or "center"?
     switch (pointsToCheck) {
-      case 'center':
+    case 'center':
 
-        // `hit` will be true only if the center point is touching
-        const point = {
-          center: {
-            // x: sprite.centerX,
-            // y: sprite.centerY
-            x: s.cartX + ca.x + (ca.width / 2),
-            y: s.cartY + ca.y + (ca.height / 2)
-          }
+      // `hit` will be true only if the center point is touching
+      sprite.collisionPoints = {
+        center: {
+          x: sprite.centerX,
+          y: sprite.centerY
+          // x: s.cartX + ca.x + (ca.width / 2),
+          // y: s.cartY + ca.y + (ca.height / 2)
         }
-        sprite.collisionPoints = point
-        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-        break
-      case 'every':
+      }
+      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+      break
+    case 'every':
 
-        // `hit` will be true if every point is touching
-        sprite.collisionPoints = this.getIsoPoints(sprite)
-        collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
-        break
-      case 'some':
+      // `hit` will be true if every point is touching
+      sprite.collisionPoints = this.getIsoPoints(sprite)
+      collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
+      break
+    case 'some':
 
-        // `hit` will be true only if some points are touching
-        sprite.collisionPoints = this.getIsoPoints(sprite)
-        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-        break
+      // `hit` will be true only if some points are touching
+      sprite.collisionPoints = this.getIsoPoints(sprite)
+      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+      break
     }
 
     // Return the collision object.
@@ -1010,7 +1010,7 @@ module.exports = module.exports.default = class TileUtilities {
     // map: `cartTilewidth`,`cartTileheight` and `tileDepth`. They define the Cartesian
     // dimesions of the tiles (32x32x64).
     // Check to make sure that these custom properties exist
-    if (!tiledMap.properties.cartTilewidth && !tiledMap.properties.cartTileheight && !tiledMao.properties.tileDepth) {
+    if (!tiledMap.properties.cartTilewidth && !tiledMap.properties.cartTileheight && !tiledMap.properties.tileDepth) {
       throw new Error(
         'Set custom cartTilewidth, cartTileheight and tileDepth map properties in Tiled Editor'
       )
@@ -1260,7 +1260,7 @@ module.exports = module.exports.default = class TileUtilities {
     return world
   }
 
-/*
+  /*
 //### The `shortestPath` function
 
 An A-Star search algorithm that returns an array of grid index numbers that
@@ -1293,7 +1293,7 @@ let shortestPath = tu.shortestPath(
       const row = Math.floor(index / mapWidthInTiles)
 
       // The node object
-      node = {
+      return {
         f: 0,
         g: 0,
         h: 0,
@@ -1302,40 +1302,39 @@ let shortestPath = tu.shortestPath(
         row,
         index
       }
-      return node
     })
 
-  // Initialize theShortestPath array
+    // Initialize theShortestPath array
     const theShortestPath = []
 
-  // Initialize the node map
+    // Initialize the node map
     const nodeMap = nodes(mapArray, mapWidthInTiles)
 
-  // Initialize the closed and open list arrays
+    // Initialize the closed and open list arrays
     const closedList = []
     let openList = []
 
-  // Declare the "costs" of travelling in straight or
-  // diagonal lines
+    // Declare the "costs" of travelling in straight or
+    // diagonal lines
     const straightCost = 10
     const diagonalCost = 14
 
-  // Get the start node
+    // Get the start node
     const startNode = nodeMap[startIndex]
 
-  // Get the current center node. The first one will
-  // match the path's start position
+    // Get the current center node. The first one will
+    // match the path's start position
     let centerNode = startNode
 
-  // Push the `centerNode` into the `openList`, because
-  // it's the first node that we're going to check
+    // Push the `centerNode` into the `openList`, because
+    // it's the first node that we're going to check
     openList.push(centerNode)
 
-  // Get the current destination node. The first one will
-  // match the path's end position
+    // Get the current destination node. The first one will
+    // match the path's end position
     const destinationNode = nodeMap[destinationIndex]
 
-  // All the nodes that are surrounding the current map index number
+    // All the nodes that are surrounding the current map index number
     const surroundingNodes = (index, mapArray, mapWidthInTiles, useDiagonalNodes) => {
     // Find out what all the surrounding nodes are, including those that
     // might be beyond the borders of the map
@@ -1350,8 +1349,8 @@ let shortestPath = tu.shortestPath(
         nodeMap[index + mapWidthInTiles + 1]
       ]
 
-    // Optionaly exlude the diagonal nodes, which is often perferable
-    // for 2D maze games
+      // Optionaly exlude the diagonal nodes, which is often perferable
+      // for 2D maze games
       const crossSurroundingNodes = [
         nodeMap[index - mapWidthInTiles],
         nodeMap[index - 1],
@@ -1359,8 +1358,8 @@ let shortestPath = tu.shortestPath(
         nodeMap[index + mapWidthInTiles]
       ]
 
-    // Use either `allSurroundingNodes` or `crossSurroundingNodes` depending
-    // on the the value of `useDiagonalNodes`
+      // Use either `allSurroundingNodes` or `crossSurroundingNodes` depending
+      // on the the value of `useDiagonalNodes`
       let nodesToCheck
       if (useDiagonalNodes) {
         nodesToCheck = allSurroundingNodes
@@ -1368,15 +1367,15 @@ let shortestPath = tu.shortestPath(
         nodesToCheck = crossSurroundingNodes
       }
 
-    // Find the valid sourrounding nodes, which are ones inside
-    // the map border that don't incldue obstacles. Change `allSurroundingNodes`
-    // to `crossSurroundingNodes` to prevent the path from choosing diagonal routes
+      // Find the valid sourrounding nodes, which are ones inside
+      // the map border that don't incldue obstacles. Change `allSurroundingNodes`
+      // to `crossSurroundingNodes` to prevent the path from choosing diagonal routes
       const validSurroundingNodes = nodesToCheck.filter((node) => {
       // The node will be beyond the top and bottom edges of the
       // map if it is `undefined`
         const nodeIsWithinTopAndBottomBounds = node !== undefined
 
-      // Only return nodes that are within the top and bottom map bounds
+        // Only return nodes that are within the top and bottom map bounds
         if (nodeIsWithinTopAndBottomBounds) {
         // Some Boolean values that tell us whether the current map index is on
         // the left or right border of the map, and whether any of the nodes
@@ -1386,58 +1385,58 @@ let shortestPath = tu.shortestPath(
           const nodeIsBeyondLeftBorder = node.column % (mapWidthInTiles - 1) === 0 && node.column !== 0
           const nodeIsBeyondRightBorder = node.column % mapWidthInTiles === 0
 
-        // Find out whether of not the node contains an obstacle by looping
-        // through the obstacle gids and and returning `true` if it
-        // finds any at this node's location
+          // Find out whether of not the node contains an obstacle by looping
+          // through the obstacle gids and and returning `true` if it
+          // finds any at this node's location
           const nodeContainsAnObstacle = obstacleGids.some(obstacle => mapArray[node.index] === obstacle)
 
-        // If the index is on the left border and any nodes surrounding it are beyond the
-        // left border, don't return that node
+          // If the index is on the left border and any nodes surrounding it are beyond the
+          // left border, don't return that node
           if (indexIsOnLeftBorder) {
           // console.log("left border")
             return !nodeIsBeyondLeftBorder
           }
 
-        // If the index is on the right border and any nodes surrounding it are beyond the
-        // right border, don't return that node
+          // If the index is on the right border and any nodes surrounding it are beyond the
+          // right border, don't return that node
           else if (indexIsOnRightBorder) {
           // console.log("right border")
             return !nodeIsBeyondRightBorder
           }
 
-        // Return `true` if the node doesn't contain any obstacles
+          // Return `true` if the node doesn't contain any obstacles
           else if (nodeContainsAnObstacle) {
             return false
           }
 
-        // The index must be inside the area defined by the left and right borders,
-        // so return the node
+          // The index must be inside the area defined by the left and right borders,
+          // so return the node
 
           // console.log("map interior")
           return true
         }
       })
 
-    // console.log(validSurroundingNodes)
-    // Return the array of `validSurroundingNodes`
+      // console.log(validSurroundingNodes)
+      // Return the array of `validSurroundingNodes`
       return validSurroundingNodes
     }
 
-  // Diagnostic
-  // console.log(nodeMap);
-  // console.log(centerNode);
-  // console.log(destinationNode);
-  // console.log(wallMapArray);
-  // console.log(surroundingNodes(86, mapArray, mapWidthInTiles));
+    // Diagnostic
+    // console.log(nodeMap);
+    // console.log(centerNode);
+    // console.log(destinationNode);
+    // console.log(wallMapArray);
+    // console.log(surroundingNodes(86, mapArray, mapWidthInTiles));
 
-  // Heuristic methods
-  // 1. Manhattan
+    // Heuristic methods
+    // 1. Manhattan
     const manhattan = (testNode, destinationNode) => {
       const h = Math.abs(testNode.row - destinationNode.row) * straightCost + Math.abs(testNode.column - destinationNode.column) * straightCost
       return h
     }
 
-  // 2. Euclidean
+    // 2. Euclidean
     const euclidean = (testNode, destinationNode) => {
       let vx = destinationNode.column - testNode.column
       let vy = destinationNode.row - testNode.row
@@ -1445,7 +1444,7 @@ let shortestPath = tu.shortestPath(
       return h
     }
 
-  // 3. Diagonal
+    // 3. Diagonal
     const diagonal = (testNode, destinationNode) => {
       let vx = Math.abs(destinationNode.column - testNode.column)
       let vy = Math.abs(destinationNode.row - testNode.row)
@@ -1459,26 +1458,26 @@ let shortestPath = tu.shortestPath(
       return h
     }
 
-  // Loop through all the nodes until the current `centerNode` matches the
-  // `destinationNode`. When they they're the same we know we've reached the
-  // end of the path
+    // Loop through all the nodes until the current `centerNode` matches the
+    // `destinationNode`. When they they're the same we know we've reached the
+    // end of the path
     while (centerNode !== destinationNode) {
     // Find all the nodes surrounding the current `centerNode`
       const surroundingTestNodes = surroundingNodes(centerNode.index, mapArray, mapWidthInTiles, useDiagonalNodes)
 
-    // Loop through all the `surroundingTestNodes` using a classic `for` loop
-    // (A `for` loop gives us a marginal performance boost)
+      // Loop through all the `surroundingTestNodes` using a classic `for` loop
+      // (A `for` loop gives us a marginal performance boost)
       for (let i = 0; i < surroundingTestNodes.length; i++) {
       // Get a reference to the current test node
         const testNode = surroundingTestNodes[i]
 
-      // Find out whether the node is on a straight axis or
-      // a diagonal axis, and assign the appropriate cost
+        // Find out whether the node is on a straight axis or
+        // a diagonal axis, and assign the appropriate cost
 
-      // A. Declare the cost variable
+        // A. Declare the cost variable
         let cost = 0
 
-      // B. Do they occupy the same row or column?
+        // B. Do they occupy the same row or column?
         if (centerNode.row === testNode.row || centerNode.column === testNode.column) {
         // If they do, assign a cost of "10"
           cost = straightCost
@@ -1487,54 +1486,54 @@ let shortestPath = tu.shortestPath(
           cost = diagonalCost
         }
 
-      // C. Calculate the costs (g, h and f)
-      // The node's current cost
+        // C. Calculate the costs (g, h and f)
+        // The node's current cost
         const g = centerNode.g + cost
 
-      // The cost of travelling from this node to the
-      // destination node (the heuristic)
+        // The cost of travelling from this node to the
+        // destination node (the heuristic)
         let h
         switch (heuristic) {
-          case 'manhattan':
-            h = manhattan(testNode, destinationNode)
-            break
+        case 'manhattan':
+          h = manhattan(testNode, destinationNode)
+          break
 
-          case 'euclidean':
-            h = euclidean(testNode, destinationNode)
-            break
+        case 'euclidean':
+          h = euclidean(testNode, destinationNode)
+          break
 
-          case 'diagonal':
-            h = diagonal(testNode, destinationNode)
-            break
+        case 'diagonal':
+          h = diagonal(testNode, destinationNode)
+          break
 
-          default:
-            throw new Error('Oops! It looks like you misspelled the name of the heuristic')
+        default:
+          throw new Error('Oops! It looks like you misspelled the name of the heuristic')
         }
 
-      // The final cost
+        // The final cost
         const f = g + h
 
-      // Find out if the testNode is in either
-      // the openList or closedList array
+        // Find out if the testNode is in either
+        // the openList or closedList array
         const isOnOpenList = openList.some(node => testNode === node)
         const isOnClosedList = closedList.some(node => testNode === node)
 
-      // If it's on either of these lists, we can check
-      // whether this route is a lower-cost alternative
-      // to the previous cost calculation. The new G cost
-      // will make the difference to the final F cost
+        // If it's on either of these lists, we can check
+        // whether this route is a lower-cost alternative
+        // to the previous cost calculation. The new G cost
+        // will make the difference to the final F cost
         if (isOnOpenList || isOnClosedList) {
           if (testNode.f > f) {
             testNode.f = f
             testNode.g = g
             testNode.h = h
 
-          // Only change the parent if the new cost is lower
+            // Only change the parent if the new cost is lower
             testNode.parent = centerNode
           }
         }
 
-      // Otherwise, add the testNode to the open list
+        // Otherwise, add the testNode to the open list
         else {
           testNode.f = f
           testNode.g = g
@@ -1546,39 +1545,39 @@ let shortestPath = tu.shortestPath(
       // The `for` loop ends here
       }
 
-    // Push the current centerNode into the closed list
+      // Push the current centerNode into the closed list
       closedList.push(centerNode)
 
-    // Quit the loop if there's nothing on the open list.
-    // This means that there is no path to the destination or the
-    // destination is invalid, like a wall tile
+      // Quit the loop if there's nothing on the open list.
+      // This means that there is no path to the destination or the
+      // destination is invalid, like a wall tile
       if (openList.length === 0) {
         return theShortestPath
       }
 
-    // Sort the open list according to final cost
+      // Sort the open list according to final cost
       openList = openList.sort((a, b) => a.f - b.f)
 
-    // Set the node with the lowest final cost as the new centerNode
+      // Set the node with the lowest final cost as the new centerNode
       centerNode = openList.shift()
 
     // The `while` loop ends here
     }
 
-  // Now that we have all the candidates, let's find the shortest path!
+    // Now that we have all the candidates, let's find the shortest path!
     if (openList.length !== 0) {
     // Start with the destination node
       let testNode = destinationNode
       theShortestPath.push(testNode)
 
-    // Work backwards through the node parents
-    // until the start node is found
+      // Work backwards through the node parents
+      // until the start node is found
       while (testNode !== startNode) {
       // Step through the parents of each node,
       // starting with the destination node and ending with the start node
         testNode = testNode.parent
 
-      // Add the node to the beginning of the array
+        // Add the node to the beginning of the array
         theShortestPath.unshift(testNode)
 
       // ...and then loop again to the next node's parent till you
@@ -1586,8 +1585,8 @@ let shortestPath = tu.shortestPath(
       }
     }
 
-  // Return an array of nodes that link together to form
-  // the shortest path
+    // Return an array of nodes that link together to form
+    // the shortest path
     return theShortestPath
   }
 
@@ -1642,18 +1641,6 @@ let shortestPath = tu.shortestPath(
         // position of the next point in this loop iteration
         let x = spriteOne.centerX + dx * newMagnitude
         let y = spriteOne.centerY + dy * newMagnitude
-
-        // The getIndex function converts x/y coordinates into
-        // map array index positon numbers
-        const getIndex = (x, y, tilewidth, tileheight, mapWidthInTiles) => {
-          // Convert pixel coordinates to map index coordinates
-          const index = {}
-          index.x = Math.floor(x / tilewidth)
-          index.y = Math.floor(y / tileheight)
-
-          // Return the index number
-          return index.x + (index.y * mapWidthInTiles)
-        }
 
         // Find the map index number that this x and y point corresponds to
         const index = this.getIndex(
@@ -1750,7 +1737,7 @@ let shortestPath = tu.shortestPath(
 
   validDirections (sprite, mapArray, validGid, world) {
     // Get the sprite's current map index position number
-    const index = g.getIndex(
+    const index = this.getIndex(
       sprite.x,
       sprite.y,
       world.tilewidth,
@@ -1863,29 +1850,28 @@ let shortestPath = tu.shortestPath(
 
   */
 
-  closestDirection (spriteOne, spriteTwo, validDirections = []) {
+  closestDirection (spriteOne, spriteTwo) {
     // A helper function to find the closest direction
-    const closest = () => {
-      // Plot a vector between spriteTwo and spriteOne
-      let vx = spriteTwo.centerX - spriteOne.centerX
-      let vy = spriteTwo.centerY - spriteOne.centerY
 
-      // If the distance is greater on the X axis...
-      if (Math.abs(vx) >= Math.abs(vy)) {
-        // Try left and right
-        if (vx <= 0) {
-          return 'left'
-        }
-        return 'right'
+    // Plot a vector between spriteTwo and spriteOne
+    let vx = spriteTwo.centerX - spriteOne.centerX
+    let vy = spriteTwo.centerY - spriteOne.centerY
+
+    // If the distance is greater on the X axis...
+    if (Math.abs(vx) >= Math.abs(vy)) {
+      // Try left and right
+      if (vx <= 0) {
+        return 'left'
       }
-
-      // If the distance is greater on the Y axis...
-
-        // Try up and down
-      if (vy <= 0) {
-        return 'up'
-      }
-      return 'down'
+      return 'right'
     }
+
+    // If the distance is greater on the Y axis...
+
+    // Try up and down
+    if (vy <= 0) {
+      return 'up'
+    }
+    return 'down'
   }
 }

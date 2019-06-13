@@ -5,8 +5,8 @@
   "main": "index.js",
   "browser": "es2015/index.js",
   "scripts": {
-    "lint": "eslint ./source --fix",
-    "compile": "babel ./source --out-dir ./es2015 --presets es2015"
+    "lint": "eslint . --fix",
+    "compile": "babel . --out-dir ./es2015 --presets es2015"
   },
   "repository": {
     "type": "git",
@@ -27,29 +27,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1"
   },
-  "dependencies": {},
-  "editions": [
-    {
-      "description": "Source + ESNext + Require",
-      "entry": "source/index.js",
-      "syntaxes": [
-        "javascript",
-        "esnext",
-        "require",
-        "arrows",
-        "const",
-        "let",
-        "destructuring"
-      ]
-    },
-    {
-      "description": "Babel Compiled + ES2015 + Require",
-      "entry": "es2015/index.js",
-      "syntaxes": [
-        "javascript",
-        "es2015",
-        "require"
-      ]
-    }
-  ]
+  "dependencies": {
+    "eslint": "^5.16.0"
+  }
 }
