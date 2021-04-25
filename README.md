@@ -88,7 +88,7 @@ Installing Tile Utilities
 ----------------
 #### NPM
 ```
-npm install https://github.com/Prozi/tiled-utils --save
+npm install tiled-utils --save
 ```
 #### CDN
 ```
