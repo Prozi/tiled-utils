@@ -2,17 +2,14 @@
 
 usable also in node.js
 
-=============
-
-[https://badge.fury.io/js/tiled-utils.svg]
-(https://badge.fury.io/js/tiled-utils.svg)
+[![npm](https://badge.fury.io/js/tiled-utils.svg)](https://badge.fury.io/js/tiled-utils.svg)
 
 This is an unofficial fork with commonjs require compatibility [and some bugfixes] forked from: 
 
-[![npm](https://img.shields.io/npm/v/pexi.svg)](https://www.npmjs.com/package/pixi-tile-utilities)
-[![npm](https://img.shields.io/npm/l/pexi.svg)](https://gitlab.com/griest/pixi-tile-utilities/LICENSE)
+[![npm](https://img.shields.io/npm/v/tiled-utils.svg)](https://www.npmjs.com/package/tiled-utils)
+[![npm](https://img.shields.io/npm/l/tiled-utils.svg)](https://gitlab.com/griest/tiled-utils/LICENSE)
 
-=============
+----------
 
 Tile Utilities is a collection of helpful methods and objects for using [Tiled Editor](http://www.mapeditor.org) with the [Pixi renderering engine](https://github.com/pixijs/pixi.js).
 
@@ -91,11 +88,11 @@ Installing Tile Utilities
 ----------------
 #### NPM
 ```
-npm install pixi-tile-utilities --save
+npm install https://github.com/Prozi/tiled-utils --save
 ```
 #### CDN
 ```
-<script src="https://unpkg.com/pixi-tile-utilities/dist/tile-utilities.min.js"></script>
+<script src="https://unpkg.com/tiled-utils/es2015/index.js"></script>
 ```
 
 <a id="settingup"></a>
