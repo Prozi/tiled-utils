@@ -3,7 +3,7 @@
 /* global PIXI */
 
 module.exports = module.exports.default = class TileUtilities {
-  constructor (renderingEngine = PIXI) {
+  constructor(renderingEngine = PIXI) {
     if (renderingEngine === undefined) throw new Error('Please assign a rendering engine in the constructor before using bump.js')
 
     // Find out which rendering engine is being used (the default is Pixi)
@@ -19,14 +19,14 @@ module.exports = module.exports.default = class TileUtilities {
       this.Sprite = this.renderingEngine.Sprite
       this.Rectangle = this.renderingEngine.Rectangle
       this.Graphics = this.renderingEngine.Graphics
-      this.loader = this.renderingEngine.loader
-      this.resources = this.renderingEngine.resources
+      this.loader = this.renderingEngine.Loader.shared
+      this.resources = this.loader.resources
     }
   }
 
   // Make a texture from a frame in another texture or image
-  frame (source, x, y, width, height) {
- 
+  frame(source, x, y, width, height) {
+
     // for backend use (with pixi-shim)
     // return without frame retangle
     if (!source) {
@@ -60,7 +60,7 @@ module.exports = module.exports.default = class TileUtilities {
   // converts a sprite's x and y position to an array index number.
   // It returns a single index value that tells you the map array
   // index number that the sprite is in
-  getIndex (x, y, tilewidth, tileheight, mapWidthInTiles) {
+  getIndex(x, y, tilewidth, tileheight, mapWidthInTiles) {
     const index = {}
 
     // Convert pixel coordinates to map index coordinates
@@ -85,7 +85,7 @@ module.exports = module.exports.default = class TileUtilities {
   The `world` object requires these properties:
   `x`, `y`, `tilewidth`, `tileheight` and `widthInTiles`
   */
-  getTile (index, mapArray, world) {
+  getTile(index, mapArray, world) {
     const tile = {}
     tile.gid = mapArray[index]
     tile.width = world.tilewidth
@@ -112,7 +112,7 @@ module.exports = module.exports.default = class TileUtilities {
   and the width of the map array.
   */
 
-  surroundingCells (index, widthInTiles) {
+  surroundingCells(index, widthInTiles) {
     return [
       index - widthInTiles - 1,
       index - widthInTiles,
@@ -154,7 +154,7 @@ module.exports = module.exports.default = class TileUtilities {
 ```
   */
 
-  getPoints (s) {
+  getPoints(s) {
     const ca = s.collisionArea
     if (ca !== undefined) {
       return {
@@ -220,7 +220,7 @@ module.exports = module.exports.default = class TileUtilities {
   ```
   */
 
-  hitTestTile (sprite, mapArray, gidToCheck, world, pointsToCheck) {
+  hitTestTile(sprite, mapArray, gidToCheck, world, pointsToCheck) {
     // The `checkPoints` helper function Loop through the sprite's corner points to
     // find out if they are inside an array cell that you're interested in.
     // Return `true` if they are
@@ -256,29 +256,29 @@ module.exports = module.exports.default = class TileUtilities {
     // Which points do you want to check?
     // "every", "some" or "center"?
     switch (pointsToCheck) {
-    case 'center':
+      case 'center':
 
-      // `hit` will be true only if the center point is touching
-      sprite.collisionPoints = {
-        center: {
-          x: sprite.centerX,
-          y: sprite.centerY
+        // `hit` will be true only if the center point is touching
+        sprite.collisionPoints = {
+          center: {
+            x: sprite.centerX,
+            y: sprite.centerY
+          }
         }
-      }
-      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-      break
-    case 'every':
+        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+        break
+      case 'every':
 
-      // `hit` will be true if every point is touching
-      sprite.collisionPoints = this.getPoints(sprite)
-      collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
-      break
-    case 'some':
+        // `hit` will be true if every point is touching
+        sprite.collisionPoints = this.getPoints(sprite)
+        collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
+        break
+      case 'some':
 
-      // `hit` will be true only if some points are touching
-      sprite.collisionPoints = this.getPoints(sprite)
-      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-      break
+        // `hit` will be true only if some points are touching
+        sprite.collisionPoints = this.getPoints(sprite)
+        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+        break
     }
 
     // Return the collision object.
@@ -307,7 +307,7 @@ module.exports = module.exports.default = class TileUtilities {
   child sprites on that layer.
   */
 
-  updateMap (mapArray, spritesToUpdate, world) {
+  updateMap(mapArray, spritesToUpdate, world) {
     // First create a map a new array filled with zeros.
     // The new map array will be exactly the same size as the original
     const newMapArray = mapArray.map((gid) => {
@@ -480,12 +480,23 @@ module.exports = module.exports.default = class TileUtilities {
   ```
   */
 
-  makeTiledWorld (jsonTiledMap, tileset) {
+  makeTiledWorld(jsonTiledMap) {
     // Create a group called `world` to contain all the layers, sprites
     // and objects from the `tiledMap`. The `world` object is going to be
     // returned to the main game program
     const tiledMap = (typeof jsonTiledMap === 'string') ? this.resources[jsonTiledMap].data : jsonTiledMap
-    const world = new this.Container()
+    const tilesets = tiledMap.tilesets.sort((a, b) => a.firstgid - b.firstgid).reverse();
+    const tilesetsImages = tilesets.map(({ image }) => Object.values(this.resources).find(({ name }) => name === image).texture);
+    const world = new this.Container();
+
+    const getTilesetForGid = (gid) => {
+      const index = tilesets.findIndex(({ firstgid }) => gid >= firstgid);
+
+      return {
+        tileset: tilesets[index],
+        image: tilesetsImages[index]
+      };
+    }
 
     world.tileheight = tiledMap.tileheight
     world.tilewidth = tiledMap.tilewidth
@@ -503,20 +514,6 @@ module.exports = module.exports.default = class TileUtilities {
     // named objects in the map. Named objects all have
     // a `name` property that was assigned in Tiled Editor
     world.objects = []
-
-    // The optional spacing (padding) around each tile
-    // This is to account for spacing around tiles
-    // that's commonly used with texture atlas tilesets. Set the
-    // `spacing` property when you create a new map in Tiled Editor
-    const spacing = tiledMap.tilesets[0].spacing
-
-    // Figure out how many columns there are on the tileset.
-    // This is the width of the image, divided by the width
-    // of each tile, plus any optional spacing thats around each tile
-    const numberOfTilesetColumns =
-      Math.floor(
-        tiledMap.tilesets[0].imagewidth / (tiledMap.tilewidth + spacing)
-      )
 
     // Loop through all the map layers
     tiledMap.layers.forEach((tiledLayer) => {
@@ -565,6 +562,22 @@ module.exports = module.exports.default = class TileUtilities {
 
           // If the grid id number (`gid`) isn't zero, create a sprite
           if (gid !== 0) {
+            const { tileset, image } = getTilesetForGid(gid);
+
+            // The optional spacing (padding) around each tile
+            // This is to account for spacing around tiles
+            // that's commonly used with texture atlas tilesets. Set the
+            // `spacing` property when you create a new map in Tiled Editor
+            const spacing = tileset.spacing
+
+            // Figure out how many columns there are on the tileset.
+            // This is the width of the image, divided by the width
+            // of each tile, plus any optional spacing thats around each tile
+            const numberOfTilesetColumns =
+              Math.floor(
+                tileset.imagewidth / (tiledMap.tilewidth + spacing)
+              )
+
             // Figure out the map column and row number that we're on, and then
             // calculate the grid cell's x and y pixel position.
             mapColumn = index % world.widthInTiles
@@ -575,8 +588,8 @@ module.exports = module.exports.default = class TileUtilities {
             // Figure out the column and row number that the tileset
             // image is on, and then use those values to calculate
             // the x and y pixel position of the image on the tileset
-            tilesetColumn = ((gid - 1) % numberOfTilesetColumns)
-            tilesetRow = Math.floor((gid - 1) / numberOfTilesetColumns)
+            tilesetColumn = ((gid - tileset.firstgid) % numberOfTilesetColumns)
+            tilesetRow = Math.floor((gid - tileset.firstgid) / numberOfTilesetColumns)
             tilesetX = tilesetColumn * world.tilewidth
             tilesetY = tilesetRow * world.tileheight
 
@@ -584,22 +597,22 @@ module.exports = module.exports.default = class TileUtilities {
             // there is any. This bit of code accumlates the spacing offsets from the
             // left side of the tileset and adds them to the current tile's position
             if (spacing > 0) {
-              tilesetX += spacing + (spacing * ((gid - 1) % numberOfTilesetColumns))
-              tilesetY += spacing + (spacing * Math.floor((gid - 1) / numberOfTilesetColumns))
+              tilesetX += spacing + (spacing * ((gid - tileset.firstgid) % numberOfTilesetColumns))
+              tilesetY += spacing + (spacing * Math.floor((gid - tileset.firstgid) / numberOfTilesetColumns))
             }
 
             // Use the above values to create the sprite's image from
             // the tileset image
             texture = this.frame(
-              tileset, tilesetX, tilesetY,
+              image, tilesetX, tilesetY,
               world.tilewidth, world.tileheight
             )
 
             // I've dedcided that any tiles that have a `name` property are important
             // and should be accessible in the `world.objects` array.
 
-            let tileproperties = tiledMap.tilesets[0].tileproperties || {}
-            let key = String(gid - 1)
+            let tileproperties = tileset.tileproperties || {}
+            let key = String(gid - tileset.firstgid)
 
             // If the JSON `tileproperties` object has a sub-object that
             // matches the current tile, and that sub-object has a `name` property,
@@ -723,7 +736,7 @@ module.exports = module.exports.default = class TileUtilities {
   And array `sort` function that depth-sorts sprites according to
   their `z` properties
   */
-  byDepth (a, b) {
+  byDepth(a, b) {
     // Calculate the depths of `a` and `b`
     // (add `1` to `a.z` and `b.x` to avoid multiplying by 0)
     a.depth = (a.cartX + a.cartY) * (a.z + 1)
@@ -747,7 +760,7 @@ module.exports = module.exports.default = class TileUtilities {
 
   */
 
-  hitTestIsoTile (sprite, mapArray, gidToCheck, world, pointsToCheck) {
+  hitTestIsoTile(sprite, mapArray, gidToCheck, world, pointsToCheck) {
     // The `checkPoints` helper function Loop through the sprite's corner points to
     // find out if they are inside an array cell that you're interested in.
     // Return `true` if they are
@@ -783,31 +796,31 @@ module.exports = module.exports.default = class TileUtilities {
     // Which points do you want to check?
     // "every", "some" or "center"?
     switch (pointsToCheck) {
-    case 'center':
+      case 'center':
 
-      // `hit` will be true only if the center point is touching
-      sprite.collisionPoints = {
-        center: {
-          x: sprite.centerX,
-          y: sprite.centerY
-          // x: s.cartX + ca.x + (ca.width / 2),
-          // y: s.cartY + ca.y + (ca.height / 2)
+        // `hit` will be true only if the center point is touching
+        sprite.collisionPoints = {
+          center: {
+            x: sprite.centerX,
+            y: sprite.centerY
+            // x: s.cartX + ca.x + (ca.width / 2),
+            // y: s.cartY + ca.y + (ca.height / 2)
+          }
         }
-      }
-      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-      break
-    case 'every':
+        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+        break
+      case 'every':
 
-      // `hit` will be true if every point is touching
-      sprite.collisionPoints = this.getIsoPoints(sprite)
-      collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
-      break
-    case 'some':
+        // `hit` will be true if every point is touching
+        sprite.collisionPoints = this.getIsoPoints(sprite)
+        collision.hit = Object.keys(sprite.collisionPoints).every(checkPoints)
+        break
+      case 'some':
 
-      // `hit` will be true only if some points are touching
-      sprite.collisionPoints = this.getIsoPoints(sprite)
-      collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
-      break
+        // `hit` will be true only if some points are touching
+        sprite.collisionPoints = this.getIsoPoints(sprite)
+        collision.hit = Object.keys(sprite.collisionPoints).some(checkPoints)
+        break
     }
 
     // Return the collision object.
@@ -822,7 +835,7 @@ module.exports = module.exports.default = class TileUtilities {
   The isomertic version of `getPoints`
   */
 
-  getIsoPoints (s) {
+  getIsoPoints(s) {
     const ca = s.collisionArea
     if (ca !== undefined) {
       return {
@@ -872,12 +885,12 @@ module.exports = module.exports.default = class TileUtilities {
   */
 
   // Create some useful properties on the pointer
-  makeIsoPointer (pointer, world) {
+  makeIsoPointer(pointer, world) {
     Object.defineProperties(pointer, {
 
       // The isometric's world's Cartesian coordiantes
       cartX: {
-        get () {
+        get() {
           const x =
             (((2 * this.y + this.x) - (2 * world.y + world.x)) / 2) - (world.cartTilewidth / 2)
 
@@ -887,7 +900,7 @@ module.exports = module.exports.default = class TileUtilities {
         configurable: true
       },
       cartY: {
-        get () {
+        get() {
           const y =
             (((2 * this.y - this.x) - (2 * world.y - world.x)) / 2) + (world.cartTileheight / 2)
 
@@ -899,14 +912,14 @@ module.exports = module.exports.default = class TileUtilities {
 
       // The tile's column and row in the array
       column: {
-        get () {
+        get() {
           return Math.floor(this.cartX / world.cartTilewidth)
         },
         enumerable: true,
         configurable: true
       },
       row: {
-        get () {
+        get() {
           return Math.floor(this.cartY / world.cartTileheight)
         },
         enumerable: true,
@@ -915,7 +928,7 @@ module.exports = module.exports.default = class TileUtilities {
 
       // The tile's index number in the array
       index: {
-        get () {
+        get() {
           const index = {}
 
           // Convert pixel coordinates to map index coordinates
@@ -937,7 +950,7 @@ module.exports = module.exports.default = class TileUtilities {
   shaped rectangle using Pixi's graphics library
   */
 
-  isoRectangle (width, height, fillStyle) {
+  isoRectangle(width, height, fillStyle) {
     // Figure out the `halfHeight` value
     const halfHeight = height / 2
 
@@ -968,7 +981,7 @@ module.exports = module.exports.default = class TileUtilities {
   `cartWidth` and `cartHeight`.
   */
 
-  addIsoProperties (sprite, x, y, width, height) {
+  addIsoProperties(sprite, x, y, width, height) {
     // Cartisian (flat 2D) properties
     sprite.cartX = x
     sprite.cartY = y
@@ -978,14 +991,14 @@ module.exports = module.exports.default = class TileUtilities {
     // Add a getter/setter for the isometric properties
     Object.defineProperties(sprite, {
       isoX: {
-        get () {
+        get() {
           return this.cartX - this.cartY
         },
         enumerable: true,
         configurable: true
       },
       isoY: {
-        get () {
+        get() {
           return (this.cartX + this.cartY) / 2
         },
         enumerable: true,
@@ -1000,7 +1013,7 @@ module.exports = module.exports.default = class TileUtilities {
 
   */
 
-  makeIsoTiledWorld (jsonTiledMap, tileset) {
+  makeIsoTiledWorld(jsonTiledMap, tileset) {
     // Create a group called `world` to contain all the layers, sprites
     // and objects from the `tiledMap`. The `world` object is going to be
     // returned to the main game program
@@ -1277,7 +1290,7 @@ let shortestPath = tu.shortestPath(
 
 */
 
-  shortestPath (
+  shortestPath(
     startIndex,
     destinationIndex,
     mapArray,
@@ -1286,7 +1299,7 @@ let shortestPath = tu.shortestPath(
     heuristic = 'manhattan',
     useDiagonalNodes = true
   ) {
-  // The `nodes` function creates the array of node objects
+    // The `nodes` function creates the array of node objects
     const nodes = (mapArray, mapWidthInTiles) => mapArray.map((cell, index) => {
       // Figure out the row and column of this cell
       const column = index % mapWidthInTiles
@@ -1336,8 +1349,8 @@ let shortestPath = tu.shortestPath(
 
     // All the nodes that are surrounding the current map index number
     const surroundingNodes = (index, mapArray, mapWidthInTiles, useDiagonalNodes) => {
-    // Find out what all the surrounding nodes are, including those that
-    // might be beyond the borders of the map
+      // Find out what all the surrounding nodes are, including those that
+      // might be beyond the borders of the map
       const allSurroundingNodes = [
         nodeMap[index - mapWidthInTiles - 1],
         nodeMap[index - mapWidthInTiles],
@@ -1371,15 +1384,15 @@ let shortestPath = tu.shortestPath(
       // the map border that don't incldue obstacles. Change `allSurroundingNodes`
       // to `crossSurroundingNodes` to prevent the path from choosing diagonal routes
       const validSurroundingNodes = nodesToCheck.filter((node) => {
-      // The node will be beyond the top and bottom edges of the
-      // map if it is `undefined`
+        // The node will be beyond the top and bottom edges of the
+        // map if it is `undefined`
         const nodeIsWithinTopAndBottomBounds = node !== undefined
 
         // Only return nodes that are within the top and bottom map bounds
         if (nodeIsWithinTopAndBottomBounds) {
-        // Some Boolean values that tell us whether the current map index is on
-        // the left or right border of the map, and whether any of the nodes
-        // surrounding that index extend beyond the left and right borders
+          // Some Boolean values that tell us whether the current map index is on
+          // the left or right border of the map, and whether any of the nodes
+          // surrounding that index extend beyond the left and right borders
           const indexIsOnLeftBorder = index % mapWidthInTiles === 0
           const indexIsOnRightBorder = (index + 1) % mapWidthInTiles === 0
           const nodeIsBeyondLeftBorder = node.column % (mapWidthInTiles - 1) === 0 && node.column !== 0
@@ -1393,14 +1406,14 @@ let shortestPath = tu.shortestPath(
           // If the index is on the left border and any nodes surrounding it are beyond the
           // left border, don't return that node
           if (indexIsOnLeftBorder) {
-          // console.log("left border")
+            // console.log("left border")
             return !nodeIsBeyondLeftBorder
           }
 
           // If the index is on the right border and any nodes surrounding it are beyond the
           // right border, don't return that node
           else if (indexIsOnRightBorder) {
-          // console.log("right border")
+            // console.log("right border")
             return !nodeIsBeyondRightBorder
           }
 
@@ -1462,13 +1475,13 @@ let shortestPath = tu.shortestPath(
     // `destinationNode`. When they they're the same we know we've reached the
     // end of the path
     while (centerNode !== destinationNode) {
-    // Find all the nodes surrounding the current `centerNode`
+      // Find all the nodes surrounding the current `centerNode`
       const surroundingTestNodes = surroundingNodes(centerNode.index, mapArray, mapWidthInTiles, useDiagonalNodes)
 
       // Loop through all the `surroundingTestNodes` using a classic `for` loop
       // (A `for` loop gives us a marginal performance boost)
       for (let i = 0; i < surroundingTestNodes.length; i++) {
-      // Get a reference to the current test node
+        // Get a reference to the current test node
         const testNode = surroundingTestNodes[i]
 
         // Find out whether the node is on a straight axis or
@@ -1479,10 +1492,10 @@ let shortestPath = tu.shortestPath(
 
         // B. Do they occupy the same row or column?
         if (centerNode.row === testNode.row || centerNode.column === testNode.column) {
-        // If they do, assign a cost of "10"
+          // If they do, assign a cost of "10"
           cost = straightCost
         } else {
-        // Otherwise, assign a cost of "14"
+          // Otherwise, assign a cost of "14"
           cost = diagonalCost
         }
 
@@ -1494,20 +1507,20 @@ let shortestPath = tu.shortestPath(
         // destination node (the heuristic)
         let h
         switch (heuristic) {
-        case 'manhattan':
-          h = manhattan(testNode, destinationNode)
-          break
+          case 'manhattan':
+            h = manhattan(testNode, destinationNode)
+            break
 
-        case 'euclidean':
-          h = euclidean(testNode, destinationNode)
-          break
+          case 'euclidean':
+            h = euclidean(testNode, destinationNode)
+            break
 
-        case 'diagonal':
-          h = diagonal(testNode, destinationNode)
-          break
+          case 'diagonal':
+            h = diagonal(testNode, destinationNode)
+            break
 
-        default:
-          throw new Error('Oops! It looks like you misspelled the name of the heuristic')
+          default:
+            throw new Error('Oops! It looks like you misspelled the name of the heuristic')
         }
 
         // The final cost
@@ -1542,7 +1555,7 @@ let shortestPath = tu.shortestPath(
           openList.push(testNode)
         }
 
-      // The `for` loop ends here
+        // The `for` loop ends here
       }
 
       // Push the current centerNode into the closed list
@@ -1561,27 +1574,27 @@ let shortestPath = tu.shortestPath(
       // Set the node with the lowest final cost as the new centerNode
       centerNode = openList.shift()
 
-    // The `while` loop ends here
+      // The `while` loop ends here
     }
 
     // Now that we have all the candidates, let's find the shortest path!
     if (openList.length !== 0) {
-    // Start with the destination node
+      // Start with the destination node
       let testNode = destinationNode
       theShortestPath.push(testNode)
 
       // Work backwards through the node parents
       // until the start node is found
       while (testNode !== startNode) {
-      // Step through the parents of each node,
-      // starting with the destination node and ending with the start node
+        // Step through the parents of each node,
+        // starting with the destination node and ending with the start node
         testNode = testNode.parent
 
         // Add the node to the beginning of the array
         theShortestPath.unshift(testNode)
 
-      // ...and then loop again to the next node's parent till you
-      // reach the end of the path
+        // ...and then loop again to the next node's parent till you
+        // reach the end of the path
       }
     }
 
@@ -1598,7 +1611,7 @@ let shortestPath = tu.shortestPath(
 
   */
 
-  tileBasedLineOfSight (
+  tileBasedLineOfSight(
     spriteOne, // The first sprite, with `centerX` and `centerY` properties
     spriteTwo, // The second sprite, with `centerX` and `centerY` properties
     mapArray, // The tile map array
@@ -1698,7 +1711,7 @@ let shortestPath = tu.shortestPath(
 
   */
 
-  surroundingCrossCells (index, widthInTiles) {
+  surroundingCrossCells(index, widthInTiles) {
     return [
       index - widthInTiles,
       index - 1,
@@ -1716,7 +1729,7 @@ let shortestPath = tu.shortestPath(
 
   */
 
-  surroundingDiagonalCells (index, widthInTiles) {
+  surroundingDiagonalCells(index, widthInTiles) {
     return [
       index - widthInTiles - 1,
       index - widthInTiles + 1,
@@ -1735,7 +1748,7 @@ let shortestPath = tu.shortestPath(
   (such as, possibly, `0`.)
   */
 
-  validDirections (sprite, mapArray, validGid, world) {
+  validDirections(sprite, mapArray, validGid, world) {
     // Get the sprite's current map index position number
     const index = this.getIndex(
       sprite.x,
@@ -1792,7 +1805,7 @@ let shortestPath = tu.shortestPath(
   array location in which it able to change its direction
   */
 
-  canChangeDirection (validDirections = []) {
+  canChangeDirection(validDirections = []) {
     // Is the sprite in a dead-end (cul de sac.) This will be true if there's only
     // one element in the `validDirections` array
     const inCulDeSac = validDirections.length === 1
@@ -1824,7 +1837,7 @@ let shortestPath = tu.shortestPath(
 
   */
 
-  randomDirection (sprite, validDirections = []) {
+  randomDirection(sprite, validDirections = []) {
     // The `randomInt` helper function returns a random integer between a minimum
     // and maximum value
     const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
@@ -1850,7 +1863,7 @@ let shortestPath = tu.shortestPath(
 
   */
 
-  closestDirection (spriteOne, spriteTwo) {
+  closestDirection(spriteOne, spriteTwo) {
     // A helper function to find the closest direction
 
     // Plot a vector between spriteTwo and spriteOne
