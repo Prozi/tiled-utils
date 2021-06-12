@@ -1,6 +1,6 @@
 {
   "name": "tiled-utils",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "description": "Tiled Utils for Pixi.js - usable with node.js with pixi-shim",
   "main": "index.js",
   "browser": "es2015/index.js",
