@@ -45,9 +45,11 @@ module.exports = module.exports.default = class TileUtilities {
       }
     }
 
-    // If the `source` is a texture,  use it
-    else if (source instanceof this.Texture) {
+    // If the `source` is a texture, use it
+    else if (typeof source.clone === "function") {
       texture = source.clone();
+    } else {
+      texture = source;
     }
 
     if (texture) {
