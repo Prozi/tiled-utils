@@ -24,7 +24,7 @@ module.exports = module.exports.default = class TileUtilities {
       this.Graphics = this.renderingEngine.Graphics;
       this.loader =
         this.renderingEngine.Loader.shared || new this.renderingEngine.Loader();
-      this.resources = this.loader.resources;
+      this.resources = this.loader.resources || {};
     }
   }
 
