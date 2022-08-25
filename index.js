@@ -504,10 +504,12 @@ module.exports = module.exports.default = class TileUtilities {
     const tilesets = tiledMap.tilesets
       .sort((a, b) => a.firstgid - b.firstgid)
       .reverse();
-    const tilesetsImages = tilesets.map(
-      ({ image }) =>
-        Object.values(this.resources).find(({ name }) => name === image).texture
-    );
+    const tilesetsImages = tilesets.map(({ image }) => {
+      const { texture } =
+        Object.values(this.resources).find(({ name }) => name === image) || {};
+
+      return texture;
+    });
     const world = new this.Container();
 
     const getTilesetForGid = (gid) => {
