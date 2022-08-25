@@ -22,7 +22,8 @@ module.exports = module.exports.default = class TileUtilities {
       this.Sprite = this.renderingEngine.Sprite;
       this.Rectangle = this.renderingEngine.Rectangle;
       this.Graphics = this.renderingEngine.Graphics;
-      this.loader = this.renderingEngine.Loader.shared;
+      this.loader =
+        this.renderingEngine.Loader.shared || new this.renderingEngine.Loader();
       this.resources = this.loader.resources;
     }
   }
