@@ -22,8 +22,7 @@ module.exports = module.exports.default = class TileUtilities {
       this.Sprite = this.renderingEngine.Sprite;
       this.Rectangle = this.renderingEngine.Rectangle;
       this.Graphics = this.renderingEngine.Graphics;
-      this.loader =
-        this.renderingEngine.Loader.shared || new this.renderingEngine.Loader();
+      this.loader = {};
       this.resources = this.loader.resources || {};
     }
   }
@@ -493,14 +492,10 @@ module.exports = module.exports.default = class TileUtilities {
   ```
   */
 
-  makeTiledWorld(jsonTiledMap) {
+  makeTiledWorld(tiledMap) {
     // Create a group called `world` to contain all the layers, sprites
     // and objects from the `tiledMap`. The `world` object is going to be
     // returned to the main game program
-    const tiledMap =
-      typeof jsonTiledMap === "string"
-        ? this.resources[jsonTiledMap].data
-        : jsonTiledMap;
     const tilesets = tiledMap.tilesets
       .sort((a, b) => a.firstgid - b.firstgid)
       .reverse();

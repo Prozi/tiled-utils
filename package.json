@@ -1,6 +1,6 @@
 {
   "name": "tiled-utils",
-  "version": "4.1.4",
+  "version": "4.2.0",
   "description": "Tiled Utils for Pixi.js - usable with node.js with pixi-shim",
   "main": "index.js",
   "browser": "es2015/index.js",
@@ -31,12 +31,12 @@
   },
   "homepage": "https://gitlab.com/griest/pexi/tree/master/src/tile-utilities#README",
   "devDependencies": {
-    "@babel/cli": "^7.18.10",
-    "@babel/core": "^7.18.13",
-    "@babel/preset-env": "^7.18.10",
-    "eslint": "^8.22.0",
+    "@babel/cli": "^7.20.7",
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "eslint": "^8.32.0",
     "pixi-shim": "^2.4.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.8.3"
   },
   "optionalDependencies": {
     "pixi.js": "*"
