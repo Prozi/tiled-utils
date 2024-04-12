@@ -1,15 +1,15 @@
 {
   "name": "tiled-utils",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "description": "Tiled Utils for Pixi.js - usable with node.js with pixi-shim",
   "main": "index.js",
-  "browser": "es2015/index.js",
+  "browser": "dist/index.js",
   "scripts": {
-    "lint": "eslint . --fix",
-    "format": "prettier index.js --write",
+    "lint": "eslint --config eslint.config.js --ignore-pattern eslint.config.js . --fix",
+    "format": "prettier *.* --write",
     "precommit": "yarn lint && yarn format",
     "test": "node test/tiled-utils-test-in-node.js",
-    "build": "babel ./index.js --out-dir ./es2015"
+    "build": "babel index.js --out-dir dist"
   },
   "repository": {
     "type": "git",
@@ -31,14 +31,20 @@
   },
   "homepage": "https://gitlab.com/griest/pexi/tree/master/src/tile-utilities#README",
   "devDependencies": {
-    "@babel/cli": "^7.20.7",
-    "@babel/core": "^7.20.12",
-    "@babel/preset-env": "^7.20.2",
-    "eslint": "^8.32.0",
-    "pixi-shim": "^2.4.0",
-    "prettier": "^2.8.3"
+    "@babel/cli": "^7.24.1",
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "@eslint/js": "^9.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
+    "globals": "^15.0.0",
+    "pixi-shim": "^2.5.0",
+    "prettier": "^3.2.5"
   },
-  "optionalDependencies": {
-    "pixi.js": "*"
+  "peerDependencies": {
+    "pixi.js": "^8.1.0"
   }
 }
