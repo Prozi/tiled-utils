@@ -15,6 +15,10 @@
     "type": "git",
     "url": "https://github.com/Prozi/tiled-utils.git"
   },
+  "resolutions": {
+    "semver": "^5.7.2",
+    "minimatch": "^3.0.5"
+  },
   "keywords": [
     "pixi.js",
     "tiles",
