@@ -1,9 +1,13 @@
 {
   "name": "tiled-utils",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Tiled Utils for Pixi.js - usable with node.js with pixi-shim",
   "main": "index.js",
   "browser": "dist/index.js",
+  "files": [
+    "index.js",
+    "dist/index.js"
+  ],
   "scripts": {
     "lint": "eslint --config eslint.config.js --ignore-pattern eslint.config.js . --fix",
     "format": "prettier *.* --write",
