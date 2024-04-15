@@ -634,7 +634,7 @@ module.exports = module.exports.default = class TileUtilities {
             // matches the current tile, and that sub-object has a `name` property,
             // then create a sprite and assign the tile properties onto
             // the sprite
-            if (tileproperties[key] && tileproperties[key].name) {
+            if (tileproperties[key] && tileproperties[key].label) {
               // Make a sprite
               tileSprite = new this.Sprite(texture)
 
@@ -712,7 +712,7 @@ module.exports = module.exports.default = class TileUtilities {
       const searchForObject = () => {
         let foundObject
         world.objects.some((object) => {
-          if (object.name && object.name === objectName) {
+          if (object.label === objectName) {
             foundObject = object
             return true
           }
@@ -732,7 +732,7 @@ module.exports = module.exports.default = class TileUtilities {
     world.getObjects = (objectNames) => {
       const foundObjects = []
       world.objects.forEach((object) => {
-        if (object.name && objectNames.indexOf(object.name) !== -1) {
+        if (object.label && objectNames.indexOf(object.label) !== -1) {
           foundObjects.push(object)
         }
       })
@@ -1105,12 +1105,13 @@ module.exports = module.exports.default = class TileUtilities {
       // all of the layer properties onto it.
       const layerGroup = new this.Container()
 
-      Object.keys(tiledLayer).forEach((key) => {
+      Object.keys(tiledLayer).forEach((keyFrom) => {
         // Add all the layer's properties to the group, except the
         // width and height (because the group will work those our for
         // itself based on its content).
-        if (key !== 'width' && key !== 'height') {
-          layerGroup[key] = tiledLayer[key]
+        if (!['width', 'height'].includes(keyFrom)) {
+          const keyInto = keyFrom === 'name' ? 'label' : keyFrom
+          layerGroup[keyInto] = tiledLayer[keyFrom]
         }
       })
 
@@ -1183,7 +1184,7 @@ module.exports = module.exports.default = class TileUtilities {
             // matches the current tile, and that sub-object has a `name` property,
             // then create a sprite and assign the tile properties onto
             // the sprite
-            if (tileproperties[key] && tileproperties[key].name) {
+            if (tileproperties[key] && tileproperties[key].label) {
               // Make a sprite
               tileSprite = new this.Sprite(texture)
 
@@ -1267,7 +1268,7 @@ module.exports = module.exports.default = class TileUtilities {
       const searchForObject = () => {
         let foundObject
         world.objects.some((object) => {
-          if (object.name && object.name === objectName) {
+          if (object.label === objectName) {
             foundObject = object
             return true
           }
@@ -1287,7 +1288,7 @@ module.exports = module.exports.default = class TileUtilities {
     world.getObjects = (objectNames) => {
       const foundObjects = []
       world.objects.forEach((object) => {
-        if (object.name && objectNames.indexOf(object.name) !== -1) {
+        if (object.label && objectNames.indexOf(object.label) !== -1) {
           foundObjects.push(object)
         }
       })
